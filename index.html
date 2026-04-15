@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Invesmate × MyOperator — ROI Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --myo-blue:#1B6EF3;--myo-blue-dark:#1254C7;--myo-blue-light:#EBF2FF;
+  --inv-green:#0D3B26;--inv-green-mid:#15803D;--inv-green-light:#DCFCE7;
+  --inv-gold:#F59E0B;--inv-gold-light:#FEF3C7;
+  --dark:#0F172A;--text:#1E293B;--text2:#475569;--text3:#94A3B8;
+  --border:#E2E8F0;--surface:#F8FAFC;--white:#FFFFFF;--red:#DC2626;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow:0 4px 16px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#F1F5F9;color:var(--text);font-size:14px;}
+
+/* HEADER */
+.hdr{background:var(--dark);padding:0 2rem;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.hdr-l{display:flex;align-items:center;gap:12px;}
+.hdr-logo{height:26px;object-fit:contain;filter:brightness(0) invert(1);}
+.hdr-div{width:1px;height:26px;background:rgba(255,255,255,.2);}
+.hdr-x{color:rgba(255,255,255,.35);font-size:13px;}
+.hdr-r{display:flex;gap:8px;}
+.htag{padding:4px 11px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;}
+.htag-b{background:rgba(27,110,243,.3);color:#93C5FD;}
+.htag-g{background:rgba(245,158,11,.2);color:#FCD34D;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--inv-green) 0%,#1A5C3A 45%,var(--myo-blue-dark) 100%);padding:2.5rem 2rem 2rem;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 20% 50%,rgba(255,255,255,.04) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(27,110,243,.15) 0%,transparent 50%);}
+.hero-in{max-width:1100px;margin:0 auto;position:relative;}
+.hero-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;align-items:flex-start;}
+.hero-h{font-family:'Space Grotesk',sans-serif;font-size:27px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:8px;}
+.hero-h em{color:var(--inv-gold);font-style:normal;}
+.hero-p{font-size:13px;color:rgba(255,255,255,.6);line-height:1.65;max-width:480px;}
+.hero-stats{display:flex;gap:2rem;margin-top:1.5rem;flex-wrap:wrap;}
+.hstat .hn{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--inv-gold);}
+.hstat .hl{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;}
+.hero-cards{display:flex;flex-direction:column;gap:8px;}
+.hcard{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 14px;font-size:12px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:8px;}
+.hcard span{font-size:18px;}
+
+/* MAIN */
+.main{max-width:1100px;margin:0 auto;padding:1.5rem 1.5rem 4rem;}
+
+/* CHIPS */
+.chips-wrap{background:var(--white);border-radius:14px;border:1px solid var(--border);padding:1rem 1.25rem;margin-bottom:1.25rem;box-shadow:var(--shadow-sm);}
+.chips-lbl{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--border);cursor:pointer;background:var(--white);color:var(--text2);font-size:13px;font-weight:500;transition:all .18s;user-select:none;}
+.chip:hover{border-color:var(--myo-blue);color:var(--myo-blue);}
+.chip-ico{font-size:20px;line-height:1;}
+.chip-txt{display:flex;flex-direction:column;}
+.chip-sub{font-size:10px;font-weight:400;opacity:.6;margin-top:1px;}
+.chip.on{background:var(--inv-green);color:#fff;border-color:var(--inv-green);}
+.chip.discuss.on{background:linear-gradient(135deg,#92400E,#B45309);color:#fff;border-color:#92400E;}
+.chip.discuss:not(.on){border-color:#D97706;color:#92400E;}
+
+/* TABS */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;}
+.tab{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;border:1.5px solid var(--border);font-size:13px;font-weight:500;cursor:pointer;background:var(--white);color:var(--text2);transition:all .18s;}
+.tab:hover{border-color:var(--myo-blue);color:var(--myo-blue);}
+.tab.active{background:var(--myo-blue);color:#fff;border-color:var(--myo-blue);box-shadow:0 4px 12px rgba(27,110,243,.3);}
+.tab-ico{font-size:16px;}
+
+/* PANEL */
+.panel{display:none;}
+.panel.active{display:block;animation:fadeUp .22s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* CARD */
+.card{background:var(--white);border-radius:16px;border:1px solid var(--border);padding:1.5rem;box-shadow:var(--shadow);}
+
+/* PANEL HEAD */
+.phead{display:flex;align-items:flex-start;gap:12px;margin-bottom:1.25rem;}
+.pico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.pico.green{background:var(--inv-green-light);}
+.pico.blue{background:var(--myo-blue-light);}
+.pico.amber{background:var(--inv-gold-light);}
+.pico.wa{background:#DCF8C6;}
+.ptitle{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;}
+.psub{font-size:12px;color:var(--text3);margin-top:3px;line-height:1.5;}
+.live-b{background:var(--inv-green-light);color:var(--inv-green-mid);padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.04em;margin-left:6px;}
+.disc-b{background:var(--inv-gold-light);color:#92400E;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.04em;margin-left:6px;}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+
+/* INPUT GROUP */
+.ig{margin-bottom:.95rem;}
+.ig label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;}
+.ir{display:flex;align-items:center;gap:10px;}
+.ir input[type=range]{flex:1;min-width:0;height:4px;accent-color:var(--myo-blue);cursor:pointer;}
+.nbox{width:100px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;font-weight:600;text-align:right;font-family:'Space Grotesk',sans-serif;transition:border-color .15s,background .15s;}
+.nbox:focus{outline:none;border-color:var(--myo-blue);background:var(--white);}
+.unit{font-size:12px;color:var(--text3);min-width:14px;}
+
+/* METRIC CARD */
+.mc{background:var(--surface);border-radius:12px;padding:.85rem 1rem;border:1px solid var(--border);}
+.mc .ml{font-size:11px;color:var(--text3);margin-bottom:5px;font-weight:500;}
+.mc .mn{font-size:20px;font-weight:700;font-family:'Space Grotesk',sans-serif;}
+.g-t{color:var(--inv-green-mid);}.b-t{color:var(--myo-blue);}
+
+/* RESULT BOX */
+.rbox{background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border:1px solid #86EFAC;border-radius:14px;padding:1.25rem;margin-top:.75rem;}
+.rbox .big{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:var(--inv-green);}
+.rsub{font-size:12px;color:var(--inv-green-mid);margin-top:4px;}
+.btrack{height:8px;background:rgba(21,128,61,.12);border-radius:999px;overflow:hidden;margin:12px 0 5px;}
+.bfill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--inv-green-mid),var(--myo-blue));transition:width .5s cubic-bezier(.4,0,.2,1);min-width:3px;}
+.blbl{font-size:11px;color:var(--inv-green-mid);}
+
+/* INSIGHT */
+.insight{background:var(--myo-blue-light);border-left:3px solid var(--myo-blue);border-radius:0 10px 10px 0;padding:.9rem 1rem;margin-top:1rem;font-size:12.5px;line-height:1.65;color:var(--text2);}
+.insight strong{color:var(--text);font-weight:600;}
+
+/* SUMMARY TOTAL */
+.total-card{background:linear-gradient(135deg,var(--inv-green) 0%,#1E5C3A 50%,var(--myo-blue-dark) 100%);border-radius:16px;padding:1.75rem;color:#fff;position:relative;overflow:hidden;margin:1rem 0;}
+.total-card::after{content:'₹';position:absolute;right:-12px;top:-20px;font-size:160px;font-weight:700;color:rgba(255,255,255,.04);font-family:'Space Grotesk',sans-serif;pointer-events:none;}
+.tc-lbl{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:8px;}
+.tc-num{font-family:'Space Grotesk',sans-serif;font-size:46px;font-weight:700;color:#fff;line-height:1;}
+.tc-ann{font-size:14px;color:rgba(255,255,255,.6);margin-top:8px;}
+
+.plan-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0;}
+.plan-wrap label{font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:8px;}
+
+.divider{height:1px;background:var(--border);margin:1.25rem 0;}
+.trow{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--border);}
+.trow:last-child{border:none;}
+.tl-t{font-size:12.5px;color:var(--text2);}
+.tv-t{font-size:13px;font-weight:700;color:var(--text);font-family:'Space Grotesk',sans-serif;}
+
+/* FOOTER */
+.footer{text-align:center;font-size:12px;color:var(--text3);padding:2rem 0 1rem;border-top:1px solid var(--border);margin-top:2rem;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
+.footer img{height:16px;opacity:.4;filter:grayscale(1);}
+
+/* RESPONSIVE */
+@media(max-width:720px){
+  .g2{grid-template-columns:1fr;}.g4{grid-template-columns:repeat(2,1fr);}.g3{grid-template-columns:repeat(2,1fr);}
+  .hdr{padding:0 1rem;}.main{padding:1rem 1rem 3rem;}.hero{padding:1.5rem 1rem;}
+  .hero-h{font-size:20px;}.tc-num{font-size:32px;}.hstat .hn{font-size:18px;}
+  .hdr-r .htag-g{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-l">
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div style="width:28px;height:28px;background:#15803D;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;font-family:'Space Grotesk',sans-serif;">IN</div>
+      <span style="color:#fff;font-weight:700;font-size:14px;font-family:'Space Grotesk',sans-serif;letter-spacing:.01em;">INVESMATE</span>
+    </div>
+    <div class="hdr-div"></div>
+    <span class="hdr-x">×</span>
+    <div class="hdr-div"></div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div style="width:28px;height:28px;background:#1B6EF3;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;font-family:'Space Grotesk',sans-serif;">M</div>
+      <span style="color:#fff;font-weight:700;font-size:14px;font-family:'Space Grotesk',sans-serif;letter-spacing:.01em;">MyOperator</span>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <span class="htag htag-g">ROI Intelligence Tool</span>
+    <span class="htag htag-b">Powered by MyOperator</span>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-in">
+    <div class="hero-top">
+      <div>
+        <div class="hero-h">ROI Calculator — <em>Invesmate Group</em></div>
+        <div class="hero-p">Quantify the exact value MyOperator delivers across all 7 services. Enter your real numbers, toggle services, and see total ROI update live.</div>
+        <div class="hero-stats">
+          <div class="hstat"><div class="hn">1.2L+</div><div class="hl">Students enrolled</div></div>
+          <div class="hstat"><div class="hn">4</div><div class="hl">Business verticals</div></div>
+          <div class="hstat"><div class="hn">7</div><div class="hl">MyOperator services</div></div>
+          <div class="hstat"><div class="hn" id="hero-roi">0×</div><div class="hl">Live ROI multiple</div></div>
+        </div>
+      </div>
+      <div class="hero-cards">
+        <div class="hcard"><span>🏆</span>SEBI Registered · INH000017985</div>
+        <div class="hcard"><span>📍</span>Kolkata, West Bengal</div>
+        <div class="hcard"><span>🎓</span>INVESMATE · INSIGHTS · Travelzia · INVESTEEN</div>
+        <div class="hcard"><span>🤝</span>Long-term MyOperator client</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="main">
+
+<!-- CHIPS -->
+<div class="chips-wrap">
+  <div class="chips-lbl">Toggle services — click to include / exclude from total ROI</div>
+  <div class="chips">
+    <div class="chip on" id="chip-ivr" onclick="toggleChip('ivr')"><span class="chip-ico">📟</span><span class="chip-txt">IVR<span class="chip-sub">currently live</span></span></div>
+    <div class="chip on" id="chip-sms" onclick="toggleChip('sms')"><span class="chip-ico">✉️</span><span class="chip-txt">Bulk SMS<span class="chip-sub">currently live</span></span></div>
+    <div class="chip on" id="chip-vb" onclick="toggleChip('vb')"><span class="chip-ico">📣</span><span class="chip-txt">Voice Broadcast<span class="chip-sub">currently live</span></span></div>
+    <div class="chip on" id="chip-tc" onclick="toggleChip('tc')"><span class="chip-ico">✅</span><span class="chip-txt">Truecaller Biz<span class="chip-sub">currently live</span></span></div>
+    <div class="chip on" id="chip-wa" onclick="toggleChip('wa')"><span class="chip-ico">💚</span><span class="chip-txt">WhatsApp<span class="chip-sub">currently live</span></span></div>
+    <div class="chip discuss on" id="chip-vai" onclick="toggleChip('vai')"><span class="chip-ico">🤖</span><span class="chip-txt">Voice AI Agent<span class="chip-sub">in discussion</span></span></div>
+    <div class="chip discuss on" id="chip-cai" onclick="toggleChip('cai')"><span class="chip-ico">💬</span><span class="chip-txt">Chat AI Agent<span class="chip-sub">in discussion</span></span></div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('ivr',this)"><span class="tab-ico">📟</span>IVR</button>
+  <button class="tab" onclick="switchTab('sms',this)"><span class="tab-ico">✉️</span>Bulk SMS</button>
+  <button class="tab" onclick="switchTab('vb',this)"><span class="tab-ico">📣</span>Voice Broadcast</button>
+  <button class="tab" onclick="switchTab('tc',this)"><span class="tab-ico">✅</span>Truecaller</button>
+  <button class="tab" onclick="switchTab('wa',this)"><span class="tab-ico">💚</span>WhatsApp</button>
+  <button class="tab" onclick="switchTab('vai',this)"><span class="tab-ico">🤖</span>Voice AI</button>
+  <button class="tab" onclick="switchTab('cai',this)"><span class="tab-ico">💬</span>Chat AI</button>
+  <button class="tab" onclick="switchTab('summary',this)"><span class="tab-ico">📊</span>Total ROI</button>
+</div>
+
+<!-- IVR -->
+<div class="panel active" id="tab-ivr"><div class="card">
+  <div class="phead"><div class="pico green">📟</div><div><div class="ptitle">IVR — Smart Call Routing & Missed Call Recovery <span class="live-b">LIVE</span></div><div class="psub">Every missed call = a lost enrollment. IVR ensures zero dropped leads across all Invesmate verticals — Edtech, INSIGHTS, Travelzia.</div></div></div>
+  <div class="g2">
+    <div>
+      <div class="ig"><label>📞 Inbound calls per day</label><div class="ir"><input type="range" min="20" max="2000" step="10" value="100" id="ivr_r1" oninput="sync('ivr_1',this.value);calcIVR()"><input class="nbox" type="number" id="ivr_1" value="100" min="1" oninput="syncR('ivr_r1',this.value);calcIVR()"></div></div>
+      <div class="ig"><label>📉 Missed call rate before IVR (%)</label><div class="ir"><input type="range" min="1" max="95" step="1" value="35" id="ivr_r2" oninput="sync('ivr_2',this.value);calcIVR()"><input class="nbox" type="number" id="ivr_2" value="35" min="1" max="99" oninput="syncR('ivr_r2',this.value);calcIVR()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>📈 IVR reduces missed calls to (%)</label><div class="ir"><input type="range" min="1" max="50" step="1" value="5" id="ivr_r3" oninput="sync('ivr_3',this.value);calcIVR()"><input class="nbox" type="number" id="ivr_3" value="5" min="0" max="99" oninput="syncR('ivr_r3',this.value);calcIVR()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>🎯 Call-to-enrollment conversion (%)</label><div class="ir"><input type="range" min="1" max="50" step="1" value="12" id="ivr_r4" oninput="sync('ivr_4',this.value);calcIVR()"><input class="nbox" type="number" id="ivr_4" value="12" min="0" max="100" oninput="syncR('ivr_r4',this.value);calcIVR()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>💰 Average course / service fee (₹)</label><div class="ir"><input type="range" min="1000" max="50000" step="500" value="12000" id="ivr_r5" oninput="sync('ivr_5',this.value);calcIVR()"><input class="nbox" type="number" id="ivr_5" value="12000" min="0" oninput="syncR('ivr_r5',this.value);calcIVR()"></div></div>
+    </div>
+    <div>
+      <div class="g2" style="gap:10px;margin-bottom:12px;">
+        <div class="mc"><div class="ml">Missed calls saved/mo</div><div class="mn g-t" id="ivr_o1">—</div></div>
+        <div class="mc"><div class="ml">Extra enrollments/mo</div><div class="mn g-t" id="ivr_o2">—</div></div>
+      </div>
+      <div class="rbox"><div class="big" id="ivr_rev">₹0</div><div class="rsub">Monthly revenue recovered via IVR</div><div class="btrack"><div class="bfill" id="ivr_bar" style="width:2%"></div></div><div class="blbl" id="ivr_lbl">—</div></div>
+      <div class="insight"><strong>🏫 Invesmate IVR impact:</strong> Calls flow in for Power TI & F&O course queries, INSIGHTS research subscriptions & Travelzia bookings. IVR routes each to the right team instantly — no dropped leads, no revenue left on the table.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- BULK SMS -->
+<div class="panel" id="tab-sms"><div class="card">
+  <div class="phead"><div class="pico blue">✉️</div><div><div class="ptitle">Bulk SMS — Batch Announcements & Re-engagement <span class="live-b">LIVE</span></div><div class="psub">Reach 12,000+ students instantly for new batches, fee reminders & free masterclass invites.</div></div></div>
+  <div class="g2">
+    <div>
+      <div class="ig"><label>📨 SMS blasts per month</label><div class="ir"><input type="range" min="1" max="30" step="1" value="6" id="sms_r1" oninput="sync('sms_1',this.value);calcSMS()"><input class="nbox" type="number" id="sms_1" value="6" min="1" oninput="syncR('sms_r1',this.value);calcSMS()"></div></div>
+      <div class="ig"><label>👥 Contacts per blast</label><div class="ir"><input type="range" min="100" max="200000" step="500" value="12000" id="sms_r2" oninput="sync('sms_2',this.value);calcSMS()"><input class="nbox" type="number" id="sms_2" value="12000" min="0" oninput="syncR('sms_r2',this.value);calcSMS()"></div></div>
+      <div class="ig"><label>👆 SMS response / click rate (%)</label><div class="ir"><input type="range" min="0.5" max="30" step="0.5" value="4" id="sms_r3" oninput="sync('sms_3',this.value);calcSMS()"><input class="nbox" type="number" id="sms_3" value="4" min="0" max="100" step="0.5" oninput="syncR('sms_r3',this.value);calcSMS()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>🎯 Response-to-enrollment conversion (%)</label><div class="ir"><input type="range" min="1" max="50" step="1" value="10" id="sms_r4" oninput="sync('sms_4',this.value);calcSMS()"><input class="nbox" type="number" id="sms_4" value="10" min="0" max="100" oninput="syncR('sms_r4',this.value);calcSMS()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>💰 Average fee (₹)</label><div class="ir"><input type="range" min="1000" max="50000" step="500" value="12000" id="sms_r5" oninput="sync('sms_5',this.value);calcSMS()"><input class="nbox" type="number" id="sms_5" value="12000" min="0" oninput="syncR('sms_r5',this.value);calcSMS()"></div></div>
+      <div class="ig"><label>💸 Cost saved vs. manual outreach (₹/mo)</label><div class="ir"><input type="range" min="0" max="500000" step="1000" value="20000" id="sms_r6" oninput="sync('sms_6',this.value);calcSMS()"><input class="nbox" type="number" id="sms_6" value="20000" min="0" oninput="syncR('sms_r6',this.value);calcSMS()"></div></div>
+    </div>
+    <div>
+      <div class="g2" style="gap:10px;margin-bottom:12px;">
+        <div class="mc"><div class="ml">Responses/month</div><div class="mn b-t" id="sms_o1">—</div></div>
+        <div class="mc"><div class="ml">Enrollments/month</div><div class="mn g-t" id="sms_o2">—</div></div>
+      </div>
+      <div class="rbox"><div class="big" id="sms_rev">₹0</div><div class="rsub">Monthly revenue + savings from Bulk SMS</div><div class="btrack"><div class="bfill" id="sms_bar" style="width:2%"></div></div><div class="blbl" id="sms_lbl">—</div></div>
+      <div class="insight"><strong>✉️ Invesmate SMS use cases:</strong> New Power TI & F&O batch announcements, fee payment reminders, free masterclass invites (1.2L database!), INVESTEEN teen program alerts (ages 10–19), INSIGHTS daily market nudges — all automated, zero manual effort.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- VOICE BROADCAST -->
+<div class="panel" id="tab-vb"><div class="card">
+  <div class="phead"><div class="pico green">📣</div><div><div class="ptitle">Voice Broadcast — Bengali-language Outreach at Scale <span class="live-b">LIVE</span></div><div class="psub">NISM-certified mentors' pre-recorded voice messages in Bengali — far more effective than SMS for vernacular-first audiences.</div></div></div>
+  <div class="g2">
+    <div>
+      <div class="ig"><label>📢 Broadcasts per month</label><div class="ir"><input type="range" min="1" max="20" step="1" value="4" id="vb_r1" oninput="sync('vb_1',this.value);calcVB()"><input class="nbox" type="number" id="vb_1" value="4" min="1" oninput="syncR('vb_r1',this.value);calcVB()"></div></div>
+      <div class="ig"><label>👥 Contacts per broadcast</label><div class="ir"><input type="range" min="100" max="200000" step="500" value="8000" id="vb_r2" oninput="sync('vb_2',this.value);calcVB()"><input class="nbox" type="number" id="vb_2" value="8000" min="0" oninput="syncR('vb_r2',this.value);calcVB()"></div></div>
+      <div class="ig"><label>📲 Call pick-up rate (%)</label><div class="ir"><input type="range" min="5" max="90" step="1" value="40" id="vb_r3" oninput="sync('vb_3',this.value);calcVB()"><input class="nbox" type="number" id="vb_3" value="40" min="0" max="100" oninput="syncR('vb_r3',this.value);calcVB()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>🔁 Listened-to-callback rate (%)</label><div class="ir"><input type="range" min="1" max="40" step="1" value="7" id="vb_r4" oninput="sync('vb_4',this.value);calcVB()"><input class="nbox" type="number" id="vb_4" value="7" min="0" max="100" oninput="syncR('vb_r4',this.value);calcVB()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>🎯 Callback-to-enrollment (%)</label><div class="ir"><input type="range" min="1" max="60" step="1" value="15" id="vb_r5" oninput="sync('vb_5',this.value);calcVB()"><input class="nbox" type="number" id="vb_5" value="15" min="0" max="100" oninput="syncR('vb_r5',this.value);calcVB()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>💰 Average fee (₹)</label><div class="ir"><input type="range" min="1000" max="50000" step="500" value="12000" id="vb_r6" oninput="sync('vb_6',this.value);calcVB()"><input class="nbox" type="number" id="vb_6" value="12000" min="0" oninput="syncR('vb_r6',this.value);calcVB()"></div></div>
+    </div>
+    <div>
+      <div class="g2" style="gap:10px;margin-bottom:12px;">
+        <div class="mc"><div class="ml">Callbacks/month</div><div class="mn b-t" id="vb_o1">—</div></div>
+        <div class="mc"><div class="ml">Enrollments/month</div><div class="mn g-t" id="vb_o2">—</div></div>
+      </div>
+      <div class="rbox"><div class="big" id="vb_rev">₹0</div><div class="rsub">Monthly revenue via Voice Broadcast</div><div class="btrack"><div class="bfill" id="vb_bar" style="width:2%"></div></div><div class="blbl" id="vb_lbl">—</div></div>
+      <div class="insight"><strong>📣 Sample message:</strong> "নমস্কার! নতুন Power TI batch শুরু হচ্ছে সোমবার — এখনই enroll করতে 1 চাপুন।" Mentor's own voice in Bengali creates instant trust. Callbacks from warm, high-intent leads.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- TRUECALLER -->
+<div class="panel" id="tab-tc"><div class="card">
+  <div class="phead"><div class="pico blue">✅</div><div><div class="ptitle">Truecaller for Business — Verified Caller ID & Brand Trust <span class="live-b">LIVE</span></div><div class="psub">Unknown numbers get ignored. INVESMATE verified badge on screen = dramatically higher pick-up rates across WB.</div></div></div>
+  <div class="g2">
+    <div>
+      <div class="ig"><label>📞 Outbound calls per day</label><div class="ir"><input type="range" min="10" max="2000" step="10" value="150" id="tc_r1" oninput="sync('tc_1',this.value);calcTC()"><input class="nbox" type="number" id="tc_1" value="150" min="1" oninput="syncR('tc_r1',this.value);calcTC()"></div></div>
+      <div class="ig"><label>📉 Pick-up rate before Truecaller (%)</label><div class="ir"><input type="range" min="1" max="90" step="1" value="28" id="tc_r2" oninput="sync('tc_2',this.value);calcTC()"><input class="nbox" type="number" id="tc_2" value="28" min="0" max="100" oninput="syncR('tc_r2',this.value);calcTC()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>📈 Pick-up rate after Truecaller (%)</label><div class="ir"><input type="range" min="1" max="99" step="1" value="55" id="tc_r3" oninput="sync('tc_3',this.value);calcTC()"><input class="nbox" type="number" id="tc_3" value="55" min="0" max="100" oninput="syncR('tc_r3',this.value);calcTC()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>🎯 Connected call-to-enrollment (%)</label><div class="ir"><input type="range" min="1" max="50" step="1" value="10" id="tc_r4" oninput="sync('tc_4',this.value);calcTC()"><input class="nbox" type="number" id="tc_4" value="10" min="0" max="100" oninput="syncR('tc_r4',this.value);calcTC()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>💰 Average fee (₹)</label><div class="ir"><input type="range" min="1000" max="50000" step="500" value="12000" id="tc_r5" oninput="sync('tc_5',this.value);calcTC()"><input class="nbox" type="number" id="tc_5" value="12000" min="0" oninput="syncR('tc_r5',this.value);calcTC()"></div></div>
+    </div>
+    <div>
+      <div class="g2" style="gap:10px;margin-bottom:12px;">
+        <div class="mc"><div class="ml">Extra pickups/month</div><div class="mn g-t" id="tc_o1">—</div></div>
+        <div class="mc"><div class="ml">Extra enrollments/mo</div><div class="mn g-t" id="tc_o2">—</div></div>
+      </div>
+      <div class="rbox"><div class="big" id="tc_rev">₹0</div><div class="rsub">Monthly revenue uplift from Truecaller branding</div><div class="btrack"><div class="bfill" id="tc_bar" style="width:2%"></div></div><div class="blbl" id="tc_lbl">—</div></div>
+      <div class="insight"><strong>✅ SEBI credibility, visually confirmed:</strong> When INVESMATE shows as a verified business on Truecaller, prospects across West Bengal answer. SEBI Reg No. INH000017985 + Truecaller verified badge = trust before they even say hello.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- WHATSAPP -->
+<div class="panel" id="tab-wa"><div class="card">
+  <div class="phead"><div class="pico wa">💚</div><div><div class="ptitle">WhatsApp — Campaign Automation & Lead Nurture <span class="live-b">LIVE</span></div><div class="psub">98% open rate. Perfect for Invesmate's Bengali-speaking student community across all 4 verticals.</div></div></div>
+  <div class="g2">
+    <div>
+      <div class="ig"><label>💚 Total contacts in database</label><div class="ir"><input type="range" min="100" max="500000" step="500" value="15000" id="wa_r1" oninput="sync('wa_1',this.value);calcWA()"><input class="nbox" type="number" id="wa_1" value="15000" min="0" oninput="syncR('wa_r1',this.value);calcWA()"></div></div>
+      <div class="ig"><label>📅 Campaigns per month</label><div class="ir"><input type="range" min="1" max="20" step="1" value="5" id="wa_r2" oninput="sync('wa_2',this.value);calcWA()"><input class="nbox" type="number" id="wa_2" value="5" min="1" oninput="syncR('wa_r2',this.value);calcWA()"></div></div>
+      <div class="ig"><label>👁 Open rate (%)</label><div class="ir"><input type="range" min="5" max="99" step="1" value="60" id="wa_r3" oninput="sync('wa_3',this.value);calcWA()"><input class="nbox" type="number" id="wa_3" value="60" min="0" max="100" oninput="syncR('wa_r3',this.value);calcWA()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>🎯 Open-to-enrollment conversion (%)</label><div class="ir"><input type="range" min="0.5" max="30" step="0.5" value="4" id="wa_r4" oninput="sync('wa_4',this.value);calcWA()"><input class="nbox" type="number" id="wa_4" value="4" min="0" max="100" step="0.5" oninput="syncR('wa_r4',this.value);calcWA()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>💰 Average fee (₹)</label><div class="ir"><input type="range" min="1000" max="50000" step="500" value="12000" id="wa_r5" oninput="sync('wa_5',this.value);calcWA()"><input class="nbox" type="number" id="wa_5" value="12000" min="0" oninput="syncR('wa_r5',this.value);calcWA()"></div></div>
+    </div>
+    <div>
+      <div class="g2" style="gap:10px;margin-bottom:12px;">
+        <div class="mc"><div class="ml">Reach per campaign</div><div class="mn b-t" id="wa_o1">—</div></div>
+        <div class="mc"><div class="ml">Enrollments/month</div><div class="mn g-t" id="wa_o2">—</div></div>
+      </div>
+      <div class="rbox"><div class="big" id="wa_rev">₹0</div><div class="rsub">Monthly revenue from WhatsApp campaigns</div><div class="btrack"><div class="bfill" id="wa_bar" style="width:2%"></div></div><div class="blbl" id="wa_lbl">—</div></div>
+      <div class="insight"><strong>💚 Invesmate WhatsApp funnel:</strong> New batch launch → F&O masterclass → INVESTEEN teen program → INSIGHTS daily research alert → Travelzia travel deal. One platform, 4 verticals, 1.2L+ students. Fully automated, 98% open rate.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- VOICE AI -->
+<div class="panel" id="tab-vai"><div class="card">
+  <div class="phead"><div class="pico amber">🤖</div><div><div class="ptitle">Voice AI Agent — 24/7 Bengali AI Receptionist <span class="disc-b">IN DISCUSSION</span></div><div class="psub">AI answers, qualifies intent, captures leads and passes hot ones to your sales team. Even at midnight during exam season.</div></div></div>
+  <div class="g2">
+    <div>
+      <div class="ig"><label>📞 Inbound calls handled by AI per day</label><div class="ir"><input type="range" min="5" max="2000" step="5" value="60" id="vai_r1" oninput="sync('vai_1',this.value);calcVAI()"><input class="nbox" type="number" id="vai_1" value="60" min="0" oninput="syncR('vai_r1',this.value);calcVAI()"></div></div>
+      <div class="ig"><label>🤖 Calls AI resolves fully (%)</label><div class="ir"><input type="range" min="5" max="95" step="5" value="55" id="vai_r2" oninput="sync('vai_2',this.value);calcVAI()"><input class="nbox" type="number" id="vai_2" value="55" min="0" max="100" oninput="syncR('vai_r2',this.value);calcVAI()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>💸 Agent cost per call handled (₹)</label><div class="ir"><input type="range" min="5" max="300" step="5" value="60" id="vai_r3" oninput="sync('vai_3',this.value);calcVAI()"><input class="nbox" type="number" id="vai_3" value="60" min="0" oninput="syncR('vai_r3',this.value);calcVAI()"></div></div>
+      <div class="ig"><label>🔥 AI-qualified leads passed to sales/day</label><div class="ir"><input type="range" min="1" max="500" step="1" value="18" id="vai_r4" oninput="sync('vai_4',this.value);calcVAI()"><input class="nbox" type="number" id="vai_4" value="18" min="0" oninput="syncR('vai_r4',this.value);calcVAI()"></div></div>
+      <div class="ig"><label>🎯 Hot lead-to-enrollment (%)</label><div class="ir"><input type="range" min="1" max="60" step="1" value="18" id="vai_r5" oninput="sync('vai_5',this.value);calcVAI()"><input class="nbox" type="number" id="vai_5" value="18" min="0" max="100" oninput="syncR('vai_r5',this.value);calcVAI()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>💰 Average fee (₹)</label><div class="ir"><input type="range" min="1000" max="50000" step="500" value="12000" id="vai_r6" oninput="sync('vai_6',this.value);calcVAI()"><input class="nbox" type="number" id="vai_6" value="12000" min="0" oninput="syncR('vai_r6',this.value);calcVAI()"></div></div>
+    </div>
+    <div>
+      <div class="g2" style="gap:10px;margin-bottom:12px;">
+        <div class="mc"><div class="ml">Agent cost saved/mo</div><div class="mn g-t" id="vai_o1">—</div></div>
+        <div class="mc"><div class="ml">AI-driven enrollments/mo</div><div class="mn g-t" id="vai_o2">—</div></div>
+      </div>
+      <div class="rbox"><div class="big" id="vai_rev">₹0</div><div class="rsub">Monthly value: cost savings + AI-driven revenue</div><div class="btrack"><div class="bfill" id="vai_bar" style="width:2%"></div></div><div class="blbl" id="vai_lbl">—</div></div>
+      <div class="insight"><strong>🤖 Pitch for Invesmate:</strong> "Power TI course ke liye 1 dabayein, F&O batch ke liye 2, mentor se baat karne ke liye 3..." — AI handles in Bengali 24/7. Qualifies intent, captures name + number, passes hot leads to counsellors. Zero missed calls, even at midnight.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- CHAT AI -->
+<div class="panel" id="tab-cai"><div class="card">
+  <div class="phead"><div class="pico amber">💬</div><div><div class="ptitle">Chat AI Agent — WhatsApp + Web Support Automation <span class="disc-b">IN DISCUSSION</span></div><div class="psub">Handles repetitive FAQs 24/7 in Bengali + Hindi, captures warm leads, escalates hot ones to counsellors.</div></div></div>
+  <div class="g2">
+    <div>
+      <div class="ig"><label>💬 Chat queries per day (WA + web)</label><div class="ir"><input type="range" min="10" max="5000" step="10" value="150" id="cai_r1" oninput="sync('cai_1',this.value);calcCAI()"><input class="nbox" type="number" id="cai_1" value="150" min="0" oninput="syncR('cai_r1',this.value);calcCAI()"></div></div>
+      <div class="ig"><label>🤖 Queries AI resolves without agent (%)</label><div class="ir"><input type="range" min="5" max="95" step="5" value="65" id="cai_r2" oninput="sync('cai_2',this.value);calcCAI()"><input class="nbox" type="number" id="cai_2" value="65" min="0" max="100" oninput="syncR('cai_r2',this.value);calcCAI()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>💸 Agent cost per chat query (₹)</label><div class="ir"><input type="range" min="5" max="200" step="5" value="30" id="cai_r3" oninput="sync('cai_3',this.value);calcCAI()"><input class="nbox" type="number" id="cai_3" value="30" min="0" oninput="syncR('cai_r3',this.value);calcCAI()"></div></div>
+      <div class="ig"><label>🔥 AI-captured leads per day</label><div class="ir"><input type="range" min="1" max="1000" step="1" value="25" id="cai_r4" oninput="sync('cai_4',this.value);calcCAI()"><input class="nbox" type="number" id="cai_4" value="25" min="0" oninput="syncR('cai_r4',this.value);calcCAI()"></div></div>
+      <div class="ig"><label>🎯 Chat lead-to-enrollment (%)</label><div class="ir"><input type="range" min="1" max="40" step="1" value="8" id="cai_r5" oninput="sync('cai_5',this.value);calcCAI()"><input class="nbox" type="number" id="cai_5" value="8" min="0" max="100" oninput="syncR('cai_r5',this.value);calcCAI()"><span class="unit">%</span></div></div>
+      <div class="ig"><label>💰 Average fee (₹)</label><div class="ir"><input type="range" min="1000" max="50000" step="500" value="12000" id="cai_r6" oninput="sync('cai_6',this.value);calcCAI()"><input class="nbox" type="number" id="cai_6" value="12000" min="0" oninput="syncR('cai_r6',this.value);calcCAI()"></div></div>
+    </div>
+    <div>
+      <div class="g2" style="gap:10px;margin-bottom:12px;">
+        <div class="mc"><div class="ml">Queries auto-resolved/mo</div><div class="mn g-t" id="cai_o1">—</div></div>
+        <div class="mc"><div class="ml">Chat enrollments/mo</div><div class="mn g-t" id="cai_o2">—</div></div>
+      </div>
+      <div class="rbox"><div class="big" id="cai_rev">₹0</div><div class="rsub">Monthly value: savings + chat-driven revenue</div><div class="btrack"><div class="bfill" id="cai_bar" style="width:2%"></div></div><div class="blbl" id="cai_lbl">—</div></div>
+      <div class="insight"><strong>💬 Students always ask the same 20 questions:</strong> "Power TI fee kitna hai?", "Next batch kab?", "SEBI registered ho?", "Refund policy kya hai?" — Chat AI answers instantly in Bengali + Hindi, captures warm leads, routes hot ones to counsellors. Team closes, not FAQs.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- SUMMARY -->
+<div class="panel" id="tab-summary"><div class="card">
+  <div class="phead"><div class="pico blue">📊</div><div><div class="ptitle">Total ROI Summary — All MyOperator Services</div><div class="psub">Combined value across live services + projected value from AI pipeline. Toggle chips above to compare scenarios.</div></div></div>
+  <div class="g4" style="margin-bottom:1.25rem;">
+    <div class="mc"><div class="ml">📟 IVR <span class="live-b" style="font-size:9px;">LIVE</span></div><div class="mn g-t" id="s_ivr">₹0</div></div>
+    <div class="mc"><div class="ml">✉️ Bulk SMS <span class="live-b" style="font-size:9px;">LIVE</span></div><div class="mn g-t" id="s_sms">₹0</div></div>
+    <div class="mc"><div class="ml">📣 Voice Broadcast <span class="live-b" style="font-size:9px;">LIVE</span></div><div class="mn g-t" id="s_vb">₹0</div></div>
+    <div class="mc"><div class="ml">✅ Truecaller Biz <span class="live-b" style="font-size:9px;">LIVE</span></div><div class="mn g-t" id="s_tc">₹0</div></div>
+    <div class="mc"><div class="ml">💚 WhatsApp <span class="live-b" style="font-size:9px;">LIVE</span></div><div class="mn g-t" id="s_wa">₹0</div></div>
+    <div class="mc"><div class="ml">🤖 Voice AI <span class="disc-b" style="font-size:9px;">PIPELINE</span></div><div class="mn g-t" id="s_vai">₹0</div></div>
+    <div class="mc"><div class="ml">💬 Chat AI <span class="disc-b" style="font-size:9px;">PIPELINE</span></div><div class="mn g-t" id="s_cai">₹0</div></div>
+  </div>
+  <div class="total-card">
+    <div class="tc-lbl">Total monthly benefit across all selected services</div>
+    <div class="tc-num" id="s_total">₹0</div>
+    <div class="tc-ann" id="s_annual">Annual projected value: ₹0</div>
+  </div>
+  <div class="plan-wrap">
+    <label>⚙️ MyOperator total monthly plan cost (₹) — enter your actual plan value</label>
+    <div class="ir"><input type="range" min="1000" max="200000" step="1000" value="15000" id="s_plan_r" oninput="sync('s_plan',this.value);calcSummary()" style="flex:1;accent-color:var(--myo-blue);"><input class="nbox" type="number" id="s_plan" value="15000" min="0" oninput="syncR('s_plan_r',this.value);calcSummary()"></div>
+  </div>
+  <div class="g3" style="margin-bottom:1.25rem;">
+    <div class="mc" style="border:2px solid var(--inv-green-mid);"><div class="ml">💰 Net monthly gain</div><div class="mn g-t" id="s_net">₹0</div></div>
+    <div class="mc" style="border:2px solid var(--myo-blue);"><div class="ml">🚀 ROI multiple</div><div class="mn b-t" id="s_roi">0×</div></div>
+    <div class="mc"><div class="ml">⏱️ Payback period</div><div class="mn" id="s_pb">—</div></div>
+  </div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-weight:500;">Benefit vs. plan cost ratio</div>
+  <div class="btrack" style="height:12px;margin-bottom:1.5rem;"><div class="bfill" id="s_bar" style="width:2%;height:100%;"></div></div>
+  <div class="divider"></div>
+  <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;">Business Vertical Breakdown — Invesmate Group</div>
+  <div class="trow"><span class="tl-t">🎓 INVESMATE Edtech — course enrollments (IVR + WhatsApp + SMS)</span><span class="tv-t" id="br1">₹0</span></div>
+  <div class="trow"><span class="tl-t">📈 INVESMATE INSIGHTS — research subscription calls</span><span class="tv-t" id="br2">₹0</span></div>
+  <div class="trow"><span class="tl-t">✈️ Travelzia — travel inquiry handling & booking calls</span><span class="tv-t" id="br3">₹0</span></div>
+  <div class="trow"><span class="tl-t">👶 INVESTEEN — teen program outreach (Voice Broadcast + SMS)</span><span class="tv-t" id="br4">₹0</span></div>
+  <div class="trow"><span class="tl-t">✅ Brand trust uplift — Truecaller verified caller ID</span><span class="tv-t" id="br5">₹0</span></div>
+  <div class="trow"><span class="tl-t">🤖 AI automation savings — Voice AI + Chat AI (pipeline)</span><span class="tv-t" id="br6">₹0</span></div>
+</div></div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span style="font-weight:600;color:#15803D;">INVESMATE</span>
+  <span>×</span>
+  <span style="font-weight:600;color:#1B6EF3;">MyOperator</span>
+  <span>· ROI Intelligence Tool · April 2026</span>
+</div>
+</main>
+
+<script>
+let V={ivr:0,sms:0,vb:0,tc:0,wa:0,vai:0,cai:0};
+let A={ivr:1,sms:1,vb:1,tc:1,wa:1,vai:1,cai:1};
+const fmt=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+const fmtN=n=>Math.round(n).toLocaleString('en-IN');
+const g=id=>parseFloat(document.getElementById(id).value)||0;
+const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+const bar=(id,p)=>{const e=document.getElementById(id);if(e)e.style.width=Math.min(96,Math.max(2,p))+'%';};
+function sync(id,v){const e=document.getElementById(id);if(e)e.value=v;}
+function syncR(id,v){const e=document.getElementById(id);if(e)e.value=v;}
+function toggleChip(k){A[k]=A[k]?0:1;const e=document.getElementById('chip-'+k);A[k]?e.classList.add('on'):e.classList.remove('on');calcSummary();}
+function switchTab(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+function calcIVR(){const calls=g('ivr_1'),miss=g('ivr_2')/100,after=g('ivr_3')/100,conv=g('ivr_4')/100,fee=g('ivr_5');const saved=Math.max(0,Math.round(calls*30*(miss-after)));const enr=Math.round(saved*conv);V.ivr=enr*fee;set('ivr_o1',fmtN(saved));set('ivr_o2',fmtN(enr));set('ivr_rev',fmt(V.ivr));bar('ivr_bar',enr*0.4);set('ivr_lbl',fmtN(enr)+' enrollments recovered per month');calcSummary();}
+function calcSMS(){const b=g('sms_1'),c=g('sms_2'),ctr=g('sms_3')/100,conv=g('sms_4')/100,fee=g('sms_5'),cs=g('sms_6');const resp=Math.round(c*b*ctr),enr=Math.round(resp*conv);V.sms=enr*fee+cs;set('sms_o1',fmtN(resp));set('sms_o2',fmtN(enr));set('sms_rev',fmt(V.sms));bar('sms_bar',enr*0.6);set('sms_lbl',fmt(enr*fee)+' revenue + '+fmt(cs)+' savings');calcSummary();}
+function calcVB(){const b=g('vb_1'),c=g('vb_2'),pu=g('vb_3')/100,cb=g('vb_4')/100,conv=g('vb_5')/100,fee=g('vb_6');const cbs=Math.round(c*b*pu*cb),enr=Math.round(cbs*conv);V.vb=enr*fee;set('vb_o1',fmtN(cbs));set('vb_o2',fmtN(enr));set('vb_rev',fmt(V.vb));bar('vb_bar',enr*1.2);set('vb_lbl',fmtN(cbs)+' callbacks → '+fmtN(enr)+' enrollments');calcSummary();}
+function calcTC(){const calls=g('tc_1'),bef=g('tc_2')/100,aft=g('tc_3')/100,conv=g('tc_4')/100,fee=g('tc_5');const extra=Math.max(0,Math.round(calls*30*(aft-bef))),enr=Math.round(extra*conv);V.tc=enr*fee;set('tc_o1',fmtN(extra));set('tc_o2',fmtN(enr));set('tc_rev',fmt(V.tc));bar('tc_bar',enr*0.8);set('tc_lbl',fmtN(extra)+' extra calls answered per month');calcSummary();}
+function calcWA(){const leads=g('wa_1'),camp=g('wa_2'),open=g('wa_3')/100,conv=g('wa_4')/100,fee=g('wa_5');const reach=Math.round(leads*open),enr=Math.round(reach*camp*conv);V.wa=enr*fee;set('wa_o1',fmtN(reach));set('wa_o2',fmtN(enr));set('wa_rev',fmt(V.wa));bar('wa_bar',enr*0.1);set('wa_lbl',fmtN(enr)+' enrollments via '+Math.round(camp)+' campaigns/month');calcSummary();}
+function calcVAI(){const calls=g('vai_1'),auto=g('vai_2')/100,cost=g('vai_3'),leads=g('vai_4'),conv=g('vai_5')/100,fee=g('vai_6');const csav=Math.round(calls*30*auto*cost),enr=Math.round(leads*30*conv);V.vai=csav+enr*fee;set('vai_o1',fmt(csav));set('vai_o2',fmtN(enr));set('vai_rev',fmt(V.vai));bar('vai_bar',enr*0.5);set('vai_lbl',fmt(csav)+' saved + '+fmt(enr*fee)+' AI revenue');calcSummary();}
+function calcCAI(){const q=g('cai_1'),auto=g('cai_2')/100,cost=g('cai_3'),leads=g('cai_4'),conv=g('cai_5')/100,fee=g('cai_6');const res=Math.round(q*30*auto),enr=Math.round(leads*30*conv);V.cai=res*cost+enr*fee;set('cai_o1',fmtN(res));set('cai_o2',fmtN(enr));set('cai_rev',fmt(V.cai));bar('cai_bar',enr*0.4);set('cai_lbl',fmt(res*cost)+' saved + '+fmt(enr*fee)+' revenue');calcSummary();}
+function calcSummary(){
+  const plan=g('s_plan');let total=0;
+  ['ivr','sms','vb','tc','wa','vai','cai'].forEach(k=>{const v=A[k]?V[k]:0;const e=document.getElementById('s_'+k);if(e)e.textContent=fmt(v);total+=v;});
+  const net=total-plan,roi=plan>0?total/plan:0;
+  set('s_total',fmt(total));set('s_annual','Annual projected value: '+fmt(total*12));
+  set('s_net',fmt(net));set('s_roi',roi.toFixed(1)+'×');
+  set('s_pb',total>0?Math.ceil(plan/total*30)+' days':'—');
+  bar('s_bar',Math.round(Math.min(roi/15,1)*94));
+  const heroEl=document.getElementById('hero-roi');if(heroEl)heroEl.textContent=roi.toFixed(1)+'×';
+  const live=(A.ivr?V.ivr:0)+(A.wa?V.wa:0)+(A.sms?V.sms:0);
+  set('br1',fmt(live*0.52));set('br2',fmt((A.ivr?V.ivr:0)*0.3+(A.tc?V.tc:0)*0.4));
+  set('br3',fmt((A.ivr?V.ivr:0)*0.18+(A.vb?V.vb:0)*0.2));set('br4',fmt((A.vb?V.vb:0)*0.3+(A.sms?V.sms:0)*0.2));
+  set('br5',fmt(A.tc?V.tc:0));set('br6',fmt((A.vai?V.vai:0)+(A.cai?V.cai:0)));
+}
+calcIVR();calcSMS();calcVB();calcTC();calcWA();calcVAI();calcCAI();
+</script>
+</body>
+</html>
